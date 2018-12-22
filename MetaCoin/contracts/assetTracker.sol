@@ -68,8 +68,7 @@ contract assetTracker is ERC721Token {
     
     // Get item details by providing a tokenId
     function getItemByToken(uint256 _tokenId) public view returns (string memory identifier, string memory code, string memory description) {
-        Item memory returnItem = tokenIdtoItem[_tokenId];
-        return(returnItem.identifier,returnItem.code,returnItem.description);
+        return(tokenIdtoItem[_tokenId].identifier,tokenIdtoItem[_tokenId].code,tokenIdtoItem[_tokenId].description);
     }
     
     // Check if item already exists
@@ -83,7 +82,7 @@ contract assetTracker is ERC721Token {
     }
 
     // Allow any user to see if an item is on sale
-    function isOnSale(uint256 _tokenId) public view returns(bool _onSale, uint256 _price) {
+    function isOnSale(uint256 _tokenId) public view returns(bool, uint256) {
         if(itemsOnSale[_tokenId] == 0) {
             return(false, 0);
         }

@@ -1,53 +1,38 @@
-const MetaCoin = artifacts.require("AssetTracker");
+const assetTracker = artifacts.require("AssetTracker");
 
-contract("2nd MetaCoin test", async accounts => {
-  it("should put 10000 MetaCoin in the first account", async () => {
-    let instance = await MetaCoin.deployed();
-    let balance = await instance.getBalance.call(accounts[0]);
-    assert.equal(balance.valueOf(), 10000);
+contract("AssetTracker contract test", async accounts => {
+  let item1 = {
+    identifier: "Barcode",
+    code: "13456-fgs",
+    description: "This is the first dummy item."
+  }
+
+  it("should register an item", async () => {
+    let instance = await assetTracker.deployed();
+    await instance.registerItem(item1.identifier, item1.code, item1.description);
+    let pass = await instance.getItemByToken(1);
+    assert.equal(pass[0], item1.identifier, "identifiers are not equal");
+    assert.equal(pass[1], item1.code, "codes are not equal");
+    // assert.equal(instance.ownerOf(1), accounts[0], "token is not owned by any or the correct user");
   });
 
-  it("should call a function that depends on a linked library", async () => {
-    let meta = await MetaCoin.deployed();
-    let outCoinBalance = await meta.getBalance.call(accounts[0]);
-    let metaCoinBalance = outCoinBalance.toNumber();
-    let outCoinBalanceEth = await meta.getBalanceInEth.call(accounts[0]);
-    let metaCoinEthBalance = outCoinBalanceEth.toNumber();
-    assert.equal(metaCoinEthBalance, 2 * metaCoinBalance);
-  });
+  it("should be able to validate if an item already exists", async () => {
+    let instance = await assetTracker.deployed();
+    assert.equal(await instance.doesItemExist(item1.identifier,item1.code), true, "item does not exist.")
+  })
 
-  it("should send coin correctly", async () => {
-    // Get initial balances of first and second account.
-    let account_one = accounts[0];
-    let account_two = accounts[1];
+  it("should allow the owner to put the item on sale", async () => {
+    let instance = await assetTracker.deployed();
+    await instance.putOnSale(1, 501010, {from: accounts[0]});
+    let result = await instance.isOnSale(1)
+    assert.equal(result[0] , true, "is not on sale");
+  })
 
-    let amount = 10;
+  it("should allow the owner to put a reserved address", async () => {
+    let instance = await assetTracker.deployed();
+    await instance.setReserved(1, accounts[1]);
+    let result = await instance.getReserved(1);
+    assert.equal(result, accounts[1], "is not equal to the reserved account");
+  })
 
-    let instance = await MetaCoin.deployed();
-    let meta = instance;
-
-    let balance = await meta.getBalance.call(account_one);
-    let account_one_starting_balance = balance.toNumber();
-
-    balance = await meta.getBalance.call(account_two);
-    let account_two_starting_balance = balance.toNumber();
-    await meta.sendCoin(account_two, amount, { from: account_one });
-
-    balance = await meta.getBalance.call(account_one);
-    let account_one_ending_balance = balance.toNumber();
-
-    balance = await meta.getBalance.call(account_two);
-    let account_two_ending_balance = balance.toNumber();
-
-    assert.equal(
-      account_one_ending_balance,
-      account_one_starting_balance - amount,
-      "Amount wasn't correctly taken from the sender"
-    );
-    assert.equal(
-      account_two_ending_balance,
-      account_two_starting_balance + amount,
-      "Amount wasn't correctly sent to the receiver"
-    );
-  });
 });
