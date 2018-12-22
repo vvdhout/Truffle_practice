@@ -13057,10 +13057,16 @@
       "links": {},
       "address": "0x4eAf811F680C36943a08fBb1600d539F68810D28",
       "transactionHash": "0xbbf70ec26fc278c9d248161d8d8325baef73d31a230c0f6aa675b68039858829"
+    },
+    "1545405404489": {
+      "events": {},
+      "links": {},
+      "address": "0x7c3518aF0C98eB3e2159a58e5606aD701Fc1a4dA",
+      "transactionHash": "0xea0936fc93b9755ddf7bc4a4d9dc051b17d4e7ee74a9c538ee9d227f777d9993"
     }
   },
   "schemaVersion": "3.0.0",
-  "updatedAt": "2018-12-21T13:00:44.944Z",
+  "updatedAt": "2018-12-21T15:25:03.133Z",
   "devdoc": {
     "methods": {
       "approve(address,uint256)": {
